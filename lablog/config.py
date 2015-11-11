@@ -59,7 +59,7 @@ FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
 
 SKEY = os.environ.get("SKEY")
 
-LDAP_LOGIN = True
+LDAP_LOGIN = False
 LDAP_HOST = os.environ.get('LDAP_HOST')
 LDAP_PORT = os.environ.get('LDAP_PORT')
 LDAP_BASE_DN = os.environ.get('LDAP_BASE_DN')
