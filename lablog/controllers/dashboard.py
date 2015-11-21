@@ -17,6 +17,7 @@ dashboard = Blueprint(
 
 def compare_tlc():
     diffs = {}
+    largest = []
     for l in Location.find():
         vibes = l.tlc
         if isinstance(vibes, dict):
