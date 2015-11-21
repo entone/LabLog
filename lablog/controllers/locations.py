@@ -95,7 +95,7 @@ class LocationWidget(MethodView):
             if n == interface:
                 aq = l.interface.get_long_history(db=g.INFLUX, _from="12d")
             if n in ['EnergyGateway', 'HomeEnergyMonitor']:
-                if not l.interface._last_run or l.interface._last_run > last:
+                if l.interface._last_run and l.interface._last_run > last:
                     last = l.interface._last_run
                     power = l.interface.get_long_history(db=g.INFLUX, _from="12d")
 
