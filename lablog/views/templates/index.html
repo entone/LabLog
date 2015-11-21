@@ -27,37 +27,6 @@
             {% endif %}
         {% endfor %}
     </div>
-    <!---
-    <div class="row">
-        <h3>True Cost of Living Comparison</a></h3>
-        <div class="col-md-12">
-            <table class='table tablesorter' id='tlc'>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Zipcode</th>
-                        {% for k,v in largest[0:5] %}
-                            <th>{{k}}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                {% for l in location.find() %}
-                    {% if l.property_id %}
-                    <tr>
-                        <td>{{l.mls.StreetNumber}} {{l.mls.StreetName}}</td>
-                        <td>{{l.zipcode}}</td>
-                        {% for k,v in largest[0:5] %}
-                            <td>${{l.tlc.get(k)}}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endif %}
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    !--->
 </div>
 <script type="text/javascript">
     try{
