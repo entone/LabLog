@@ -36,7 +36,7 @@ def compare_tlc():
 
 class Index(MethodView):
     def get(self):
-        largest = compare_tlc()
+        largest = []#compare_tlc()
         return render_template("index.html", client=Client, location=Location, largest=largest)
 
 
