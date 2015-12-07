@@ -45,6 +45,7 @@ class Location(orm.Document):
 
     @property
     def mls(self):
+        return {}
         if not self.meta.mls or self.property_id != self.meta.mls.get('ListingId'):
             od = OData(config.MLS_ODATA_URL, config.MLS_ODATA_UN, config.MLS_ODATA_PASSWORD)
             res = od.entity("Property").id(self.property_id)#filter("PostalCode eq '60626'").orderby("ListingContractDate desc").top("1").get()
@@ -57,6 +58,7 @@ class Location(orm.Document):
     def tlc(self):
         if not self.meta.tlc or self.zipcode != self.meta.tlc.get('msa', {}).get('zip'):
             ret = {'msa':{'zip':self.zipcode}, 'vibes':{}}
+            return ret
             try:
                 tlc = TLCEngine(un=config.TLC_UN, pw=config.TLC_PASSWORD)
                 vibes = tlc.vibes(self.zipcode)

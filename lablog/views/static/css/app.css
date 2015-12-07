@@ -6,6 +6,11 @@ img.brand{
     height: 100%;
 }
 
+.navbar-brand{
+    padding: 0;
+    padding-right: 20px;
+}
+
 .dash-chart svg {
     height: 400px;
 }

@@ -88,8 +88,8 @@
         });
 
         var token = localStorage.getItem("token");
-        var client_id = "55df1e9c64bd32000c24b167";
-        var uri = "crtlabsdev.realtors.org";
+        var client_id = "5650d8c88a5da50104a8d53d";
+        var uri = "entropealabs.com";
         var ws = new WebSocket("wss://"+uri+"/socket"+"?token="+token+"&client_id="+client_id);
         var selections = [];
         ws.onopen = function(e){

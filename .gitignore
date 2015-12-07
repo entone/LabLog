@@ -61,6 +61,7 @@ terraform/.terraform
 .env
 /config/nginx/*.crt
 /config/nginx/*.key
+/config/nginx/*.pem
 celerybeat-schedule
 /test.py
 /www
