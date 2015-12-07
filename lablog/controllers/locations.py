@@ -9,6 +9,7 @@ from lablog.interfaces.presence import Presence
 from lablog.interfaces.ups import UPS
 from lablog.interfaces.wunderground import Wunderground
 from lablog.interfaces.comed import RTTP
+from lablog.interfaces.philipshue import PhilipsHue
 from datetime import datetime, timedelta
 from lablog import config
 from humongolus import Field
@@ -23,6 +24,7 @@ interfaces = {
     UPS.__name__: UPS,
     Wunderground.__name__: Wunderground,
     RTTP.__name__: RTTP,
+    PhilipsHue.__name__:PhilipsHue,
 }
 
 locations = Blueprint(
@@ -89,6 +91,7 @@ class LocationWidget(MethodView):
         loc = Location(id=location)
         aq = {}
         power = {}
+        cost = {}
         last = datetime.utcnow()-timedelta(hours=30)
         for l in loc.interfaces:
             n = l._get('interface')._value.get('cls').split(".")[-1]
@@ -98,9 +101,11 @@ class LocationWidget(MethodView):
                 if l.interface._last_run and l.interface._last_run > last:
                     last = l.interface._last_run
                     power = l.interface.get_long_history(db=g.INFLUX, _from="12d")
+            if n in ['RTTP']:
+                cost = l.interface.get_long_history(db=g.INFLUX, _from="12d")
 
 
-        return render_template("locations/widgets/{}.html".format(interface), data=aq, power=power, interface=interface)
+        return render_template("locations/widgets/{}.html".format(interface), data=aq, power=power, interface=interface, cost=cost)
 
 locations.add_url_rule("/location", view_func=LocationController.as_view('create_location'))
 locations.add_url_rule("/location/<id>", view_func=LocationController.as_view('location'))
