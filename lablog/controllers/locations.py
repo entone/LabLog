@@ -10,6 +10,8 @@ from lablog.interfaces.ups import UPS
 from lablog.interfaces.wunderground import Wunderground
 from lablog.interfaces.comed import RTTP
 from lablog.interfaces.philipshue import PhilipsHue
+from lablog.interfaces.doorbuzzer import DoorBuzzer
+from lablog.interfaces.gimbalbeacon import GimbalBeacon
 from datetime import datetime, timedelta
 from lablog import config
 from humongolus import Field
@@ -25,6 +27,8 @@ interfaces = {
     Wunderground.__name__: Wunderground,
     RTTP.__name__: RTTP,
     PhilipsHue.__name__:PhilipsHue,
+    DoorBuzzer.__name__:DoorBuzzer,
+    GimbalBeacon.__name__:GimbalBeacon,
 }
 
 locations = Blueprint(
@@ -107,7 +111,26 @@ class LocationWidget(MethodView):
 
         return render_template("locations/widgets/{}.html".format(interface), data=aq, power=power, interface=interface, cost=cost)
 
+class LocationBuzzer(MethodView):
+
+    def get(self, location):
+        loc = Location(id=location)
+        if loc.get_interface('DoorBuzzer'): return render_template("locations/buzzer.html", location=loc)
+        return render_template("locations/widgets/no-buzzer.html")
+
+
+    def post(self, location):
+        loc = Location(id=location)
+        buzzer = loc.get_interface('DoorBuzzer')
+        try:
+            buzzer.open()
+        except Exception as e:
+            logging.error(e)
+        return render_template("locations/buzzer.html", location=loc)
+
+
 locations.add_url_rule("/location", view_func=LocationController.as_view('create_location'))
 locations.add_url_rule("/location/<id>", view_func=LocationController.as_view('location'))
 locations.add_url_rule("/location/<location>/property", view_func=LocationProperty.as_view('location_property'))
+locations.add_url_rule("/location/<location>/buzzer", view_func=LocationBuzzer.as_view('location_buzzer'))
 locations.add_url_rule("/location/<location>/interface/<interface>", view_func=LocationWidget.as_view('location_widget'))

@@ -50,3 +50,20 @@ def location_current(location_id):
             break
 
     return jsonify(ret)
+
+@location.route("/<location_id>/beacon", methods=["POST"])
+def location_beacon(location_id):
+    loc = Location(id=location_id)
+    gb = loc.get_interface('GimbalBeacon')
+    try:
+        data = request.get_json()
+    except: data = {}
+    logging.info("Test: {}".format(data))
+    logging.info(gb)
+    try:
+        gb.go(g.INFLUX, g.MQ, data=data)
+        gb._last_run = datetime.utcnow()
+        gb.save()
+    except Exception as e:
+        logging.error(e.message)
+    return jsonify({'success':True})
