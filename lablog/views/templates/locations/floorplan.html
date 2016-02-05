@@ -5,8 +5,8 @@
     <script src="/static/js/vendor/magnifik.js"></script>
     <style>
         .beacon{
-            width: 20px;
-            height: 20px;
+            width: 10px;
+            height: 10px;
             background-color: #FF0000;
             border-radius: 50%;
         }
@@ -44,6 +44,19 @@
         var location_id = "{{location._id}}";
         var counter = 0;
         var level = 0;
+        var iphone = 375;
+        var android = 412;
+        var o_width = 412;
+        var o_height = 604;
+        //var screen_height = $(window).height();
+        var screen_width = $(window).width();
+        //console.log(screen_height);
+        console.log(screen_width);
+
+        //var mult = (screen_width/o_width);
+        //var y_mult = (screen_height/o_height);
+        //console.log(mult);
+
         $('a.z1').magnifik({
             ratio: 4,
             clickCloses: false,
@@ -53,14 +66,19 @@
             $.get("/location/"+location_id+"/floorplan/"+level+"/beacons", function(res){
                 for(var b in res[0].beacons){
                     var beacon = res[0].beacons[b];
-                    show_input(beacon.x, beacon.y, beacon.id, false);
+                    show_input(beacon.x, beacon.y, beacon.id, beacon.screen_width, false);
                 }
             })
         }
 
-        function show_input(x, y, id, input, e){
+        function show_input(x, y, id, sw, input, e){
             id = id || null;
             counter++;
+            var o_width = sw || iphone;
+            console.log(o_width);
+            var mult = (screen_width/o_width);
+            var x = (x*mult);
+            var y = (y*mult);
             var content = '<form class="beacon-form" data-id="'+counter+'" id="form'+counter+'"><input type="text" class="beacon_input" placeholder="Beacon ID" name="beacon'+counter+'" value="'+id+'" id="input_beacon_'+counter+'"/><button type="submit" class="btn btn-primary btn-xs">Submit</button></form>';
             $('.m-magnifikCanvas').append("<div id='beacon"+counter+"' data-value='"+id+"' data-counter='"+counter+"' class='beacon' data-toggle='popover' data-html='true' data-content='"+content+"' style='position: absolute; left:"+x+"px; top:"+y+"px;'>&nbsp;</div>");
             $('#beacon'+counter).on('shown.bs.popover', function(){
@@ -73,7 +91,7 @@
                     var val = $("#input_beacon_"+id).val();
                     $("#beacon"+id).data("value", val);
                     var p = $("#beacon"+id).offset()
-                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, level:level}, function(e){
+                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, level:level, screen_width:android}, function(e){
                         $("#beacon"+id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
                     })
                     return false;
@@ -102,7 +120,7 @@
             $(".m-magnifikFull").click(function(e){
                 var x = (e.offsetX-10);
                 var y = (e.offsetY-10);
-                show_input(x, y, null, true);
+                show_input(x, y, null, screen_width, true);
             });
             load_beacons();
         });

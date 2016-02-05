@@ -88,9 +88,10 @@ class Location(orm.Document):
 class Beacon(orm.Document):
     _db = 'lablog'
     _collection = 'floorplan_beacons'
-    
+
     id = field.Char()
     x = field.Integer()
     y = field.Integer()
     level = field.Integer()
+    screen_width = field.Integer()
     location = field.DocumentId(type=Location)
