@@ -145,7 +145,7 @@ class LocationFloorPlan(MethodView):
         if not b: b = Beacon()
         b.x = request.form.get('x')
         b.y = request.form.get('y')
-        b.place = request.form.place
+        b.place = request.form.get('place')
         b.id = request.form.get('beacon_id')
         b.level = request.form.get('level')
         b.screen_width = request.form.get('screen_width')
