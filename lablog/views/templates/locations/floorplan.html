@@ -66,7 +66,7 @@
             $.get("/location/"+location_id+"/floorplan/"+level+"/beacons", function(res){
                 for(var b in res[0].beacons){
                     var beacon = res[0].beacons[b];
-                    show_input(beacon.x, beacon.y, beacon.id, beacon.screen_width, false);
+                    show_input(beacon.x, beacon.y, beacon.id, beacon.screen_width, beacon.place, false);
                 }
             })
         }
@@ -123,7 +123,7 @@
             $(".m-magnifikFull").click(function(e){
                 var x = (e.offsetX-10);
                 var y = (e.offsetY-10);
-                show_input(x, y, null, screen_width, true);
+                show_input(x, y, null, screen_width, null, true);
             });
             load_beacons();
         });
