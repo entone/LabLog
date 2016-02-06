@@ -11,19 +11,28 @@ class Gimbal(object):
         self.auth_key = auth_key
 
     def create_place(self, name, beacons):
-        res = self.post("places", {'name':name, 'beacons':[{'factoryId':i} for i in beacons]})
-        logging.debug(res)
+
+        beacons = [{'factoryId':"{}-{}".format(id[:4], id[4:]).lower()} for id in beacons]
+        logging.info(beacons)
+        res = self.post("places", {'name':name, 'beacons':beacons}, version=API_VERSION)
+        logging.info(res)
 
     def create_beacon(self, id, name):
+        id.lower().replace("-", "")
+        logging.info(id)
         res = self.post("beacons", {'name':name, 'factory_id':id})
-        logging.debug(res)
+        logging.info(res)
 
-    def post(self, endpoint, payload):
-        url = "{}/{}/{}".format(GIMBAL_URL, API_VERSION, endpoint)
+    def post(self, endpoint, payload, version=False):
+        url = "{}/{}".format(GIMBAL_URL, endpoint)
+        if version: url = "{}/{}/{}".format(GIMBAL_URL, version, endpoint)
+
         logging.info("Sending Request: {}".format(url))
+        logging.info("Payload: {}".format(payload))
         res = requests.post(
             url,
             json=payload,
-            headers={'Authorization', self.auth_key}
+            headers={'Authorization': "Token token={}".format(self.auth_key)}
         )
+
         return res.json()

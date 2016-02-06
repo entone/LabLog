@@ -140,10 +140,12 @@ class LocationFloorPlan(MethodView):
     def post(self, location):
         location = Location(id=location)
         logging.info("Level: {} | X:{}, Y:{}, Screen:{} | Beacon: {}".format(request.form.get('level'), request.form.get('x'), request.form.get('y'), request.form.get('screen_width'), request.form.get('beacon_id')))
+
         b = Beacon.find_one({'id':request.form.get('beacon_id')})
         if not b: b = Beacon()
         b.x = request.form.get('x')
         b.y = request.form.get('y')
+        b.place = request.form.place
         b.id = request.form.get('beacon_id')
         b.level = request.form.get('level')
         b.screen_width = request.form.get('screen_width')

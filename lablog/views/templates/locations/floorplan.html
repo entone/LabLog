@@ -71,7 +71,7 @@
             })
         }
 
-        function show_input(x, y, id, sw, input, e){
+        function show_input(x, y, id, sw, place, input, e){
             id = id || null;
             counter++;
             var o_width = sw || iphone;
@@ -79,19 +79,22 @@
             var mult = (screen_width/o_width);
             var x = (x*mult);
             var y = (y*mult);
-            var content = '<form class="beacon-form" data-id="'+counter+'" id="form'+counter+'"><input type="text" class="beacon_input" placeholder="Beacon ID" name="beacon'+counter+'" value="'+id+'" id="input_beacon_'+counter+'"/><button type="submit" class="btn btn-primary btn-xs">Submit</button></form>';
-            $('.m-magnifikCanvas').append("<div id='beacon"+counter+"' data-value='"+id+"' data-counter='"+counter+"' class='beacon' data-toggle='popover' data-html='true' data-content='"+content+"' style='position: absolute; left:"+x+"px; top:"+y+"px;'>&nbsp;</div>");
+            var content = '<form class="beacon-form" data-id="'+counter+'" id="form'+counter+'"><input type="text" class="beacon_input" placeholder="Beacon ID" name="beacon'+counter+'" value="'+id+'" id="input_beacon_'+counter+'"/><input type="text" class="beacon_input" placeholder="Place" name="beacon_place'+counter+'" value="'+place+'" id="input_beacon_place_'+counter+'"/><button type="submit" class="btn btn-primary btn-xs">Submit</button></form>';
+            $('.m-magnifikCanvas').append("<div id='beacon"+counter+"' data-value='"+id+"' data-place='"+place+"' data-counter='"+counter+"' class='beacon' data-toggle='popover' data-html='true' data-content='"+content+"' style='position: absolute; left:"+x+"px; top:"+y+"px;'>&nbsp;</div>");
             $('#beacon'+counter).on('shown.bs.popover', function(){
                 var c = $(this).data('counter');
                 $("#input_beacon_"+c).val($("#beacon"+c).data("value"));
+                $("#input_beacon_place_"+c).val($("#beacon"+c).data("place"));
                 $("#input_beacon_"+c).focus();
                 $("#form"+c).submit(function(e){
                     var id = $(this).data("id");
                     $("#beacon"+id).popover('hide');
                     var val = $("#input_beacon_"+id).val();
+                    var place = $("#input_beacon_place_"+id).val();
                     $("#beacon"+id).data("value", val);
+                    $("#beacon"+id).data("place", place);
                     var p = $("#beacon"+id).offset()
-                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, level:level, screen_width:screen_width}, function(e){
+                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, place:place, level:level, screen_width:screen_width}, function(e){
                         $("#beacon"+id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
                     })
                     return false;

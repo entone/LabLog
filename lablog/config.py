@@ -76,6 +76,8 @@ NETATMO_CLIENT_SECRET = os.environ.get('NETATMO_CLIENT_SECRET')
 NETATMO_USERNAME = os.environ.get('NETATMO_USERNAME')
 NETATMO_PASSWORD = os.environ.get('NETATMO_PASSWORD')
 
+GIMBAL_API_KEY = os.environ.get('GIMBAL_API_KEY')
+
 TLC_UN = os.environ.get('TLC_UN')
 TLC_PASSWORD = os.environ.get('TLC_PASSWORD')
 

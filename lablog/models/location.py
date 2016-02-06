@@ -92,6 +92,7 @@ class Beacon(orm.Document):
     id = field.Char()
     x = field.Integer()
     y = field.Integer()
+    place = field.Char()
     level = field.Integer()
     screen_width = field.Integer()
     location = field.DocumentId(type=Location)
