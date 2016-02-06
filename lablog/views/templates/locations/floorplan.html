@@ -91,7 +91,7 @@
                     var val = $("#input_beacon_"+id).val();
                     $("#beacon"+id).data("value", val);
                     var p = $("#beacon"+id).offset()
-                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, level:level, screen_width:android}, function(e){
+                    $.post("/location/"+location_id+"/floorplan", {x:x, y:y, beacon_id:val, level:level, screen_width:screen_width}, function(e){
                         $("#beacon"+id).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
                     })
                     return false;
