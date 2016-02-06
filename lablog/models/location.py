@@ -90,8 +90,8 @@ class Beacon(orm.Document):
     _collection = 'floorplan_beacons'
 
     id = field.Char()
-    x = field.Integer()
-    y = field.Integer()
+    x = field.Float()
+    y = field.Float()
     place = field.Char()
     level = field.Integer()
     screen_width = field.Integer()
