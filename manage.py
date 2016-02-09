@@ -4,6 +4,7 @@ from lablog import config
 from lablog.app import App
 from lablog import db
 from lablog.models.location import Beacon
+from lablog.util.gimbal import Gimbal
 from slugify import slugify
 import humongolus
 import logging
@@ -73,6 +74,15 @@ class CompareBeacons(Command):
 
         logging.info(bad)
         logging.info(json.dumps(places))
+        gimbal = Gimbal(auth_key=config.GIMBAL_API_KEY)
+        for k,v in places.iteritems():
+            for b in v:
+                name = "{}-{}".format(k, b)
+                logging.info("Creating Beacon: {}".format(name))
+                gimbal.create_beacon(b, name)
+            logging.info("Creating Place: {}".format(k))
+            gimbal.create_place(k, v)
+
 
 
 
