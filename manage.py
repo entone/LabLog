@@ -3,8 +3,11 @@ from flask.ext.script import Manager, Command, Option
 from lablog import config
 from lablog.app import App
 from lablog import db
+from lablog.models.location import Beacon
+from slugify import slugify
 import humongolus
 import logging
+import json
 
 logging.basicConfig(level=logging.INFO)
 app = App()
@@ -48,8 +51,35 @@ class InitApplication(Command):
         logging.info("Initialization Complete.")
 
 
+class CompareBeacons(Command):
+
+    def run(self):
+        bad = []
+        places = {}
+        content = [f.strip() for f in open("data/Order4204.csv")]
+        logging.info(content)
+        count = 0
+        for b in Beacon.find({'level':3}):
+            b.id = b.id.replace("-", "")
+            id = "{}-{}".format(b.id[:4], b.id[4:]).upper()
+            logging.info(id)
+            if id in content and b.place and b.place.lower() != 'duplicate':
+                place_beacons = places.setdefault(slugify(b.place.lower().strip()), [])
+                place_beacons.append(id)
+                logging.info("Match")
+            else:
+                bad.append(id)
+                logging.info("No Match")
+
+        logging.info(bad)
+        logging.info(json.dumps(places))
+
+
+
+
 manager.add_command('command', RunWorker())
 manager.add_command('init_app', InitApplication())
+manager.add_command('compare_beacons', CompareBeacons())
 #python manager.py command
 
 if __name__ == "__main__":
