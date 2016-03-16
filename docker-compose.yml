@@ -10,7 +10,7 @@ mongodb:
     command: "--dbpath=/mongo/data"
     log_driver: "syslog"
     expose:
-        - "27017:27017"
+        - "27017"
     volumes_from:
         - mongodata
 
@@ -25,8 +25,8 @@ elasticsearch:
     hostname: elasticsearch
     log_driver: "syslog"
     expose:
-        - "9200:9200"
-        - "9300:9300"
+        - "9200"
+        - "9300"
     volumes_from:
         - elasticdata
 
@@ -35,7 +35,7 @@ grafana:
     hostname: grafana
     log_driver: "syslog"
     expose:
-        - "3000:3000"
+        - "3000"
     links:
         - influxdb:influx
     environment:
@@ -46,9 +46,10 @@ influxdata:
     command: "true"
     volumes:
         - /nar/influx:/data
+        - /nar/influx-config:/config
 
 influxdb:
-    image: tutum/influxdb
+    image: tutum/influxdb:0.9
     hostname: influxdb
     log_driver: "syslog"
     ports:
@@ -57,7 +58,7 @@ influxdb:
     volumes_from:
         - influxdata
     environment:
-        INFLUXDB_VERSION: 0.9.4.1
+        INFLUXDB_VERSION: 0.9.6.1
 
 rabbitdata:
     image: rabbitmq:3-management
@@ -71,7 +72,7 @@ rabbitmq:
     hostname: rabbitmq
     log_driver: "syslog"
     expose:
-        - "5672:5672"
+        - "5672"
     ports:
         - "15672:15672"
         - "5672:5672"
@@ -99,12 +100,13 @@ api:
     command: ./startup.sh
     log_driver: "syslog"
     expose:
-        - "8000:8000"
+        - "8000"
     links:
         - mongodb:mongo
         - elasticsearch:es
         - influxdb:influx
         - rabbitmq:mq
+        - mosquitto:mqtt
 
 workers:
     extends:
@@ -116,6 +118,7 @@ workers:
         - elasticsearch:es
         - influxdb:influx
         - rabbitmq:mq
+        - mosquitto:mqtt
     environment:
         C_FORCE_ROOT: 1
 
@@ -129,8 +132,14 @@ scheduler:
         - elasticsearch:es
         - influxdb:influx
         - rabbitmq:mq
+        - mosquitto:mqtt
     environment:
         C_FORCE_ROOT: 1
+
+mosquitto:
+    image: ansi/mosquitto
+    ports:
+        - "1883:1883"
 
 nginx:
     image: nginx:1.7
