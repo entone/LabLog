@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from elasticsearch import Elasticsearch
 from elasticsearch import TransportError
+import paho.mqtt.client as mqtt
 from kombu import Connection
 from lablog import config
 from lablog import user_mapping
@@ -61,6 +62,11 @@ def init_influxdb():
 
 def init_mq():
     return Connection(config.BROKER_URL)
+
+def init_mqtt():
+    client = mqtt.Client()
+    client.connect("mqtt", 1883, 60)
+    return client
 
 def create_index(ES):
     exists = ES.indices.exists(config.ES_INDEX)

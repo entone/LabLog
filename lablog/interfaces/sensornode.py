@@ -4,6 +4,7 @@ from lablog.util import aes
 from lablog import config
 from lablog import messages
 from datetime import datetime
+import logging
 import json
 
 k = list(config.SKEY)
@@ -17,9 +18,17 @@ class Node(Interface):
 
     id = field.Char()
 
+    def publish(self, MQTT, payload):
+        topic = "/{}".format(self.id)
+        logging.info("Topic: {}".format(topic))
+        logging.info("Payload: {}".format(payload))
+        MQTT.publish(topic, payload, qos=1)
+
     def data(self, data=None):
+        data = data.ljust(128)
         j = aes.decrypt(data, KEY)
         j = json.loads(j)
+        logging.info(j)
         return j
 
     def parse_data(self, data):
