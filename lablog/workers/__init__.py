@@ -9,9 +9,11 @@ from lablog.models.location import Location
 from lablog.hooks import post_slack
 from lablog.triggers import Trigger
 import logging
+import time
 
 INFLUX = db.init_influxdb()
 MQ = db.init_mq()
+MQTT = db.init_mqtt()
 
 app = Celery(__name__)
 app.config_from_object('lablog.celeryconfig')
@@ -59,3 +61,17 @@ def run_interfaces():
         except Exception as e:
             logging.error(e)
     MQ.release()
+
+@app.task
+def ping_node():
+    for loc in Location.find():
+        try:
+            n = loc.get_interface('Node')
+            if n.id:
+                logging.info("Pinging Node: {}".format(n.id))
+                n.publish(MQTT, "6,1")
+                time.sleep(1)
+                n.publish(MQTT, "6,0")
+                time.sleep(1)
+        except Exception as e:
+            logging.error(e)

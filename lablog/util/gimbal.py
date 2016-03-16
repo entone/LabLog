@@ -10,11 +10,14 @@ class Gimbal(object):
     def __init__(self, auth_key):
         self.auth_key = auth_key
 
-    def create_place(self, name, beacons):
+    def create_place(self, name, beacons=None, geofence=None, attributes=None):
+        geofence = geofence if geofence else {}
+        attributes = attributes if attributes else {}
+        beacons = beacons if beacons else []
         beacons = [b.replace("-", "") for b in beacons]
         beacons = [{'factoryId':"{}-{}".format(id[:4], id[4:]).upper()} for id in beacons]
         logging.info(beacons)
-        res = self.post("places", {'name':name, 'beacons':beacons}, version=API_VERSION)
+        res = self.post("places", {'name':name, 'beacons':beacons, 'geofence':geofence, 'attributes':attributes}, version=API_VERSION)
         logging.info(res)
 
     def create_beacon(self, id, name):

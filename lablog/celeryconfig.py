@@ -40,4 +40,8 @@ CELERYBEAT_SCHEDULE = {
         'task': 'lablog.workers.run_interfaces',
         'schedule': datetime.timedelta(seconds=30),
     },
+    'ping_node': {
+        'task': 'lablog.workers.ping_node',
+        'schedule': datetime.timedelta(seconds=4),
+    },
 }

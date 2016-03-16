@@ -42,7 +42,6 @@ class Location(orm.Document):
         inte = None
         for i in self.interfaces:
             inter = i._get('interface')._value.get('cls').split(".")[-1]
-            self.logger.info(inter)
             if inter == interface:
                 inte = i.interface
                 break
