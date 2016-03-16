@@ -7,8 +7,10 @@ from lablog.models.location import Beacon
 from lablog.util.gimbal import Gimbal
 from slugify import slugify
 import humongolus
+import requests
 import logging
 import json
+import csv
 
 logging.basicConfig(level=logging.INFO)
 app = App()
@@ -52,7 +54,7 @@ class InitApplication(Command):
         logging.info("Initialization Complete.")
 
 
-class CompareBeacons(Command):
+class CreateBeacons(Command):
 
     def run(self):
         bad = []
@@ -83,13 +85,46 @@ class CompareBeacons(Command):
             logging.info("Creating Place: {}".format(k))
             gimbal.create_place(k, v)
 
+class CreateGeofence(Command):
 
+    GOOGLE_GEOCODE_API = "https://maps.googleapis.com/maps/api/geocode/json"
+    KEY = "AIzaSyDj7cxNIp2DLWoZUDJblwaGohLah8cLnt4"
+    def run(self):
+        gimbal = Gimbal(auth_key=config.GIMBAL_API_KEY)
+        with open('data/dostuff_venues_021816.tsv', 'rb') as tsvfile:
+            venues = csv.reader(tsvfile, delimiter='\t', quotechar='|')
+            next(venues)
+            for v in venues:
+                address = "{}, {}".format(v[5], v[3])
+                name = v[1]
+                attributes={
+                    'address':v[5],
+                    'city':v[3]
+                }
+                logging.info(name)
+                logging.info(attributes)
+                address = "{}, {}".format(v[5], v[3])
+                res = requests.get(self.GOOGLE_GEOCODE_API, params={'components':'country:US', 'address':address, 'key':self.KEY})
+                logging.info(json.dumps(res.json()))
+                coords = res.json()['results'][0]['geometry']['location']
+                logging.info(coords)
+                geofence = {
+                    "shape": "CIRCLE",
+                    "radius": 100,
+                    "center": {
+                        "latitude": coords['lat'],
+                        "longitude": coords['lng']
+                    },
+                    "points": None
+                }
+                gimbal.create_place(name=name, geofence=geofence, attributes=attributes)
 
 
 
 manager.add_command('command', RunWorker())
 manager.add_command('init_app', InitApplication())
-manager.add_command('compare_beacons', CompareBeacons())
+manager.add_command('create_beacons', CreateBeacons())
+manager.add_command('create_geofence', CreateGeofence())
 #python manager.py command
 
 if __name__ == "__main__":
