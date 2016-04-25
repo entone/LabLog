@@ -22,7 +22,7 @@ class Node(Interface):
         topic = "/{}".format(self.id)
         logging.info("Topic: {}".format(topic))
         logging.info("Payload: {}".format(payload))
-        MQTT.publish(topic, payload, qos=1)
+        MQTT.publish(topic, payload)
 
     def data(self, data=None):
         data = data.ljust(128)
